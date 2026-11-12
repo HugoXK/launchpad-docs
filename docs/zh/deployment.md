@@ -84,7 +84,7 @@
 
 - `~/work/launchpad-origin`：专用克隆，`origin` = `HugoXK/LaunchPad`，`upstream` = `agent-CI-Infra/bot`。
 - `~/work/launchpad-docs-update.sh`：每天 UTC `18:40`（北京时间约 02:40）拉取 origin 和 `HugoXK/launchpad-docs`，重新构建静态站，`rsync` 到 `~/work/landing/launchpad-docs`。
-- 构建会把 origin 的 `docs/` 镜像到 `/upstream/`，并重新生成 `/docs/snapshot/`（origin SHA、落后 upstream 的提交数、源码规模、依赖、服务清单）。上游新增文档或 origin 新提交会在下一次每日构建后出现在站点上。
+- 构建会把 origin 的 `docs/` 镜像到 `/origin/`，并重新生成 `/docs/snapshot/`（origin SHA、落后 upstream 的提交数、源码规模、依赖、服务清单）。上游新增文档或 origin 新提交会在下一次每日构建后出现在站点上。
 - 日志：`~/work/launchpad-docs-update.log`；也可以手动执行。
 
 ## 7. 本部署（launchpad.hugoxk.online）

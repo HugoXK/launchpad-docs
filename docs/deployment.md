@@ -72,7 +72,7 @@
 | 健康 | `manager` healthy；`bot` healthy；`127.0.0.1:8793/` 返回 200 |
 | 公网 | `https://launchpad.hugoxk.online/` 返回 200；`/api/setup` 返回 `{"initialized":false}`；标题 `launchpad 管理` |
 | 首次配置 | **待人工完成**：在浏览器打开公网地址，创建超级管理员，走七步向导（GitHub App 创建、GitHub 登录、安装、模型） |
-| 项目电脑镜像 | 新版本在后台从镜像站拉取并重打标签；旧镜像仍可用于首次配置，但不建议启动项目电脑直到刷新完成 |
+| 项目电脑 / Tunnel 镜像 | 已从镜像站拉取并重打 `ghcr.io` 标签；`project-image` 与 `tunnel` 就绪 |
 
 为什么有 `compose.override.yaml`：第一次启动时本地只有两周前的旧镜像，旧 manager 的 `/ready` 需要鉴权，Compose 的默认探针会一直 `starting`。override 把探针改成“读取 `/internal/manager.token` 的原始字节，base64 后请求 `/v1/projects`”；新 manager 同样支持，所以保留它不影响升级。
 

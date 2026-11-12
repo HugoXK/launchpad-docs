@@ -32,7 +32,7 @@ Not a copy of the upstream README. It answers four questions / 这不是上游 R
 | [部署与运维](docs/zh/deployment.md) | [Deployment](docs/en/deployment.md) |
 | [独立分析](docs/zh/analysis.md) | [Analysis](docs/en/analysis.md) |
 
-The built site also mirrors the origin's `docs/` at `/upstream/` and regenerates `/docs/snapshot/` on every build.
+The built site also mirrors the origin's `docs/` at `/origin/` and regenerates `/docs/snapshot/` on every build.
 
 ## Build / 构建
 

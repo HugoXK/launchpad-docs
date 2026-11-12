@@ -62,7 +62,23 @@
 
 **本部署目前停在向导之前**：控制面已启动，但 GitHub App 需要人在浏览器里点 GitHub 的确认页创建；模型 Key 也需要管理员填写。这是唯一必须人工完成的一步。
 
-## 5. 本部署（launchpad.hugoxk.online）
+## 5. 本部署的落地记录（2026-11-12）
+
+| 步骤 | 结果 |
+| --- | --- |
+| 上游检出 | `~/work/launchpad-upstream`，`main@95231e8` |
+| 控制面镜像 | 从 `ghcr.nju.edu.cn` 镜像拉取后重新打 `ghcr.io` 标签；**amd64 manifest digest 与官方一致**（control-plane `sha256:f59678a6…`，manager `sha256:4a28bd00…`） |
+| 启动 | `docker compose -p launchpad up -d`：`bot`、`manager`、`webhook`、`tunnel` 运行；`key-init` 与 `project-image` 正常退出 |
+| 健康 | `manager` healthy；`bot` healthy；`127.0.0.1:8793/` 返回 200 |
+| 公网 | `https://launchpad.hugoxk.online/` 返回 200；`/api/setup` 返回 `{"initialized":false}`；标题 `launchpad 管理` |
+| 首次配置 | **待人工完成**：在浏览器打开公网地址，创建超级管理员，走七步向导（GitHub App 创建、GitHub 登录、安装、模型） |
+| 项目电脑镜像 | 新版本在后台从镜像站拉取并重打标签；旧镜像仍可用于首次配置，但不建议启动项目电脑直到刷新完成 |
+
+为什么有 `compose.override.yaml`：第一次启动时本地只有两周前的旧镜像，旧 manager 的 `/ready` 需要鉴权，Compose 的默认探针会一直 `starting`。override 把探针改成“读取 `/internal/manager.token` 的原始字节，base64 后请求 `/v1/projects`”；新 manager 同样支持，所以保留它不影响升级。
+
+镜像站只用于传输：拉取前比对官方与镜像的 amd64 manifest digest，一致才重新打标签。生产升级仍以 `BOT_IMAGE_TAG` 固定版本为准。
+
+## 6. 本部署（launchpad.hugoxk.online）
 
 | 项 | 值 |
 | --- | --- |
@@ -96,14 +112,14 @@ curl -s http://127.0.0.1:8793/api/setup        # {"initialized":false}
 
 `/healthz` 只证明数据库可读；第一次配置前页面显示“创建第一名超级管理员”才是最终验证。
 
-## 6. 升级、备份、恢复
+## 7. 升级、备份、恢复
 
 - **升级**：`docker compose pull` → `up -d`；镜像标签固定时先改 `BOT_IMAGE_TAG`。
 - **备份**：停写或直接备份四个卷（`bot-data`、`bot-keys`、`internal-keys`、`manager-data`）。只备份数据库而丢了 `bot-keys`，凭据仍不可用。
 - **恢复**：把卷恢复到同一部署（同一 Compose 项目名）；主密钥必须与数据库配套。
 - **回滚**：改回 `BOT_IMAGE_TAG` → `up -d`；数据库迁移是向前的，回滚前先备份。
 
-## 7. 故障排查
+## 8. 故障排查
 
 | 现象 | 先看 |
 | --- | --- |
@@ -114,7 +130,7 @@ curl -s http://127.0.0.1:8793/api/setup        # {"initialized":false}
 | 模型失败 | 模型页“测试模型”；模型 URL 是否以 `/v1` 结尾；限流窗口 |
 | 限流 | “机器人账号 → GitHub 请求额度”的探测与窗口 |
 
-## 8. 本实例的注意事项
+## 9. 本实例的注意事项
 
 1. **同宿主已有另一个控制面**（`department-bot`，8791）。两者都挂 Docker socket，但 manager 的 deployment id 不同、Compose 项目不同。不要复用它的卷或项目名。
 2. 服务器负载很高（`load average` 长期 30–50）。拉镜像、构建项目电脑会变慢；不要在高峰期做重操作。

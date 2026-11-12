@@ -102,7 +102,7 @@ curl -s http://127.0.0.1:8793/api/setup        # {"initialized":false}
 
 - `~/work/launchpad-origin` is a dedicated clone (`origin` = `HugoXK/LaunchPad`, `upstream` = `agent-CI-Infra/bot`).
 - `~/work/launchpad-docs-update.sh` runs daily (UTC `18:40`, about 02:40 Beijing), pulls both the origin and `HugoXK/launchpad-docs`, rebuilds the static site and `rsync`s it to `~/work/landing/launchpad-docs`.
-- The build mirrors the origin's `docs/` at `/upstream/` and regenerates `/snapshot/` (origin SHA, commits behind upstream, source size, dependencies, services). So a new upstream doc or a new origin commit appears on the site after the next daily run.
+- The build mirrors the origin's `docs/` at `/upstream/` and regenerates `/docs/snapshot/` (origin SHA, commits behind upstream, source size, dependencies, services). So a new upstream doc or a new origin commit appears on the site after the next daily run.
 - The script is logged to `~/work/launchpad-docs-update.log`; it is safe to run by hand.
 
 ## 7. Deployment record (2026-11-12)

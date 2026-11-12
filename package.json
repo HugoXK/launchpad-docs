@@ -1,0 +1,15 @@
+{
+  "name": "launchpad-docs",
+  "private": true,
+  "type": "module",
+  "description": "LaunchPad (agent-CI-Infra/bot) deep analysis and documentation site",
+  "scripts": {
+    "build": "node scripts/build.mjs"
+  },
+  "dependencies": {
+    "marked": "^18.2.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

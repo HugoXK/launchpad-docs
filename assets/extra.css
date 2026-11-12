@@ -1,0 +1,4 @@
+.kicker{display:block;font:600 10px var(--mono,ui-monospace,monospace);letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.mut{color:var(--muted)}
+.docs-note{margin-bottom:20px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:rgba(184,243,74,.04);color:var(--muted);font-size:13.5px}
+.docs-note a{color:var(--accent)}

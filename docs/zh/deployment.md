@@ -78,12 +78,22 @@
 
 镜像站只用于传输：拉取前比对官方与镜像的 amd64 manifest digest，一致才重新打标签。生产升级仍以 `BOT_IMAGE_TAG` 固定版本为准。
 
-## 6. 本部署（launchpad.hugoxk.online）
+## 6. 上游、origin 与每日更新
+
+`agent-CI-Infra/bot` 是 **upstream**，`HugoXK/LaunchPad` 是 owner 账号下的 **origin** 分支。文档站从 origin 构建，不锁定某个上游快照：
+
+- `~/work/launchpad-origin`：专用克隆，`origin` = `HugoXK/LaunchPad`，`upstream` = `agent-CI-Infra/bot`。
+- `~/work/launchpad-docs-update.sh`：每天 UTC `18:40`（北京时间约 02:40）拉取 origin 和 `HugoXK/launchpad-docs`，重新构建静态站，`rsync` 到 `~/work/landing/launchpad-docs`。
+- 构建会把 origin 的 `docs/` 镜像到 `/upstream/`，并重新生成 `/snapshot/`（origin SHA、落后 upstream 的提交数、源码规模、依赖、服务清单）。上游新增文档或 origin 新提交会在下一次每日构建后出现在站点上。
+- 日志：`~/work/launchpad-docs-update.log`；也可以手动执行。
+
+## 7. 本部署（launchpad.hugoxk.online）
 
 | 项 | 值 |
 | --- | --- |
 | 服务器 | `123.60.231.41:10050`（用户 `xuke`） |
-| 上游检出 | `~/work/launchpad-upstream`（`main@95231e8`，浅克隆） |
+| 上游检出 | `~/work/launchpad-upstream`（`agent-CI-Infra/bot` `main@95231e8`，浅克隆） |
+| origin 检出 | `~/work/launchpad-origin`（`HugoXK/LaunchPad`，`upstream` 指向 `agent-CI-Infra/bot`，每日更新） |
 | 部署目录 | `~/work/launchpad-deploy`（`compose.yaml` + `.env`） |
 | Compose 项目 | `launchpad`（容器名 `launchpad-*`） |
 | 宿主端口 | `127.0.0.1:8793` → 容器 `8791` |
@@ -112,14 +122,14 @@ curl -s http://127.0.0.1:8793/api/setup        # {"initialized":false}
 
 `/healthz` 只证明数据库可读；第一次配置前页面显示“创建第一名超级管理员”才是最终验证。
 
-## 7. 升级、备份、恢复
+## 8. 升级、备份、恢复
 
 - **升级**：`docker compose pull` → `up -d`；镜像标签固定时先改 `BOT_IMAGE_TAG`。
 - **备份**：停写或直接备份四个卷（`bot-data`、`bot-keys`、`internal-keys`、`manager-data`）。只备份数据库而丢了 `bot-keys`，凭据仍不可用。
 - **恢复**：把卷恢复到同一部署（同一 Compose 项目名）；主密钥必须与数据库配套。
 - **回滚**：改回 `BOT_IMAGE_TAG` → `up -d`；数据库迁移是向前的，回滚前先备份。
 
-## 8. 故障排查
+## 9. 故障排查
 
 | 现象 | 先看 |
 | --- | --- |
@@ -130,7 +140,7 @@ curl -s http://127.0.0.1:8793/api/setup        # {"initialized":false}
 | 模型失败 | 模型页“测试模型”；模型 URL 是否以 `/v1` 结尾；限流窗口 |
 | 限流 | “机器人账号 → GitHub 请求额度”的探测与窗口 |
 
-## 9. 本实例的注意事项
+## 10. 本实例的注意事项
 
 1. **同宿主已有另一个控制面**（`department-bot`，8791）。两者都挂 Docker socket，但 manager 的 deployment id 不同、Compose 项目不同。不要复用它的卷或项目名。
 2. 服务器负载很高（`load average` 长期 30–50）。拉镜像、构建项目电脑会变慢；不要在高峰期做重操作。

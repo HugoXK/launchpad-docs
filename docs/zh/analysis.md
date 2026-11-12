@@ -1,6 +1,6 @@
 # 独立分析
 
-> 分析基线：`agent-CI-Infra/bot` `main@95231e8`（2026-11-12）。方法：通读官方 `docs/`，抽查源码入口、安全原语、数据库迁移、任务引擎、RoleRun、manager 与 runner，并在本机部署验证。**不是**逐行代码审计，也不是渗透测试。
+> 分析基线：upstream `agent-CI-Infra/bot` `main@95231e8`（2026-11-12）；origin `HugoXK/LaunchPad` 跟随 upstream。方法：通读官方 `docs/`，抽查源码入口、安全原语、数据库迁移、任务引擎、RoleRun、manager 与 runner，并在本机部署验证。**不是**逐行代码审计，也不是渗透测试。
 
 ## 1. 它解决了什么问题
 

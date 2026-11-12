@@ -40,6 +40,7 @@
 - 端口：业务 **8791**；manager **8793**（仅容器网络）；tunnel metrics **8794**（仅容器网络）；旧管理端口 8792 不再对宿主发布。
 - Node：**>= 22.13**；依赖包括 `@agentclientprotocol/sdk`、`@anthropic-ai/claude-code`、`@larksuiteoapi/node-sdk`、`jose`、`marked`、`dompurify`、`yaml`。
 - 许可：Apache-2.0。
+- 上游：`agent-CI-Infra/bot`；origin：`HugoXK/LaunchPad`（文档站每日从 origin 重建）。
 
 ## 它不是什么
 

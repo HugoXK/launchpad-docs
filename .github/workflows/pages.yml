@@ -1,0 +1,61 @@
+name: Build LaunchPad docs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'assets/**'
+      - 'scripts/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '37 3 * * *'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: HugoXK/LaunchPad
+          ref: main
+          path: LaunchPad
+      - run: |
+          git -C LaunchPad remote add upstream https://github.com/agent-CI-Infra/bot.git || true
+          git -C LaunchPad fetch --depth 1 upstream main || true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: LAUNCHPAD_DIR=LaunchPad node scripts/build.mjs
+      - run: echo docs.launchpad.hugoxk.online > site/CNAME
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+          cname: docs.launchpad.hugoxk.online
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

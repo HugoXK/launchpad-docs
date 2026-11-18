@@ -98,7 +98,7 @@
 | Compose 项目 | `launchpad`（容器名 `launchpad-*`） |
 | 宿主端口 | `127.0.0.1:8793` → 容器 `8791` |
 | 公网入口 | `https://launchpad.hugoxk.online`（Cloudflare Tunnel → `127.0.0.1:8793`） |
-| 文档站 | `https://launchpad-docs.hugoxk.online`（静态站点，端口 `3098`） |
+| 文档站 | `https://docs.launchpad.hugoxk.online`（GitHub Pages） |
 | 文档源 | `HugoXK/launchpad-docs` |
 | 与已有实例的关系 | 同宿主上已有 `department-bot`（`/home/zhouhongye/department-bot`，8791）。**不要动它**；本实例用独立 Compose 项目、卷和端口 |
 

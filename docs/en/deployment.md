@@ -73,7 +73,7 @@ After the deployment is up, the home page shows:
 | Compose project | `launchpad` (containers `launchpad-*`) |
 | Host port | `127.0.0.1:8793` → container `8791` |
 | Public entry | `https://launchpad.hugoxk.online` (Cloudflare Tunnel → `127.0.0.1:8793`) |
-| Docs site | `https://launchpad-docs.hugoxk.online` (static site, port `3098`) |
+| Docs site | `https://docs.launchpad.hugoxk.online` (GitHub Pages) |
 | Docs source | `HugoXK/launchpad-docs` |
 | Existing instance | `department-bot` at `/home/zhouhongye/department-bot` on 8791. **Do not touch it**; this instance has its own Compose project, volumes and port |
 

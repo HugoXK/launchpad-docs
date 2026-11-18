@@ -2,9 +2,9 @@
 
 Independent documentation and a deep analysis of [agent-CI-Infra/bot](https://github.com/agent-CI-Infra/bot) — the department GitHub App and control plane behind **LaunchPad**.
 
-- Site / 站点: <https://launchpad-docs.hugoxk.online/>
-- 中文: <https://launchpad-docs.hugoxk.online/>
-- English: <https://launchpad-docs.hugoxk.online/en/>
+- Site / 站点: <https://docs.launchpad.hugoxk.online/>
+- 中文: <https://docs.launchpad.hugoxk.online/>
+- English: <https://docs.launchpad.hugoxk.online/en/>
 - Service / 服务: <https://launchpad.hugoxk.online/>
 - Upstream: <https://github.com/agent-CI-Infra/bot>
 - Origin: <https://github.com/HugoXK/LaunchPad>

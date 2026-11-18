@@ -11,16 +11,26 @@ const APP = 'https://launchpad.hugoxk.online';
 const GH = 'https://github.com/HugoXK/LaunchPad';
 const DOCS_GH = 'https://github.com/HugoXK/launchpad-docs';
 const UPSTREAM = 'https://github.com/agent-CI-Infra/bot';
-const SLUGS = ['index', 'architecture', 'modules', 'lifecycle', 'github', 'security', 'deployment', 'analysis', 'deepwiki', 'snapshot'];
+const SLUGS = ['index', 'architecture', 'modules', 'lifecycle', 'github', 'security', 'deployment', 'analysis', 'deep-dive', 'deepwiki', 'snapshot'];
 const LABELS = {
-  zh: { index: '概览', architecture: '架构', modules: '代码地图', lifecycle: '生命周期', github: 'GitHub 集成', security: '安全模型', deployment: '部署与运维', analysis: '独立分析', deepwiki: '问 DeepWiki', snapshot: '源快照' },
-  en: { index: 'Overview', architecture: 'Architecture', modules: 'Code map', lifecycle: 'Lifecycle', github: 'GitHub integration', security: 'Security', deployment: 'Deployment', analysis: 'Analysis', deepwiki: 'Ask DeepWiki', snapshot: 'Source snapshot' },
+  zh: { index: '概览', architecture: '架构', modules: '代码地图', lifecycle: '生命周期', github: 'GitHub 集成', security: '安全模型', deployment: '部署与运维', analysis: '独立分析', 'deep-dive': '深入实现', deepwiki: '问 DeepWiki', snapshot: '源快照' },
+  en: { index: 'Overview', architecture: 'Architecture', modules: 'Code map', lifecycle: 'Lifecycle', github: 'GitHub integration', security: 'Security', deployment: 'Deployment', analysis: 'Analysis', 'deep-dive': 'Deep dive', deepwiki: 'Ask DeepWiki', snapshot: 'Source snapshot' },
 };
 const GROUPS = [
   { en: 'Overview', zh: '概览', slugs: ['index'] },
   { en: 'Understand', zh: '理解', slugs: ['architecture', 'modules', 'lifecycle', 'github'] },
   { en: 'Operate', zh: '运维', slugs: ['security', 'deployment'] },
+  { en: 'Internals', zh: '内部实现', slugs: ['deep-dive'] },
   { en: 'Analysis', zh: '分析', slugs: ['analysis', 'deepwiki', 'snapshot'] },
+];
+const HOME_START = [
+  ['index', 'What LaunchPad is, in one page.', '一页看懂 LaunchPad。'],
+  ['lifecycle', 'How an event becomes a task and a delivery.', '事件如何变成任务与交付。'],
+  ['architecture', 'Dispatch, the project manager, the runtime.', '派发、项目 Manager 与运行时。'],
+  ['security', 'Roles, credentials, containers and authority.', '角色、凭据、容器与权限。'],
+  ['deployment', 'The host, the compose stack and the ports.', '宿主、compose 与端口。'],
+  ['deep-dive', 'The DeepWiki map in one page.', '一页看懂 DeepWiki 地图。'],
+  ['deepwiki', 'Ask the upstream codebase.', '向上游代码库提问。'],
 ];
 const T = {
   zh: { home: '文档首页', docs: '文档', upstream: 'Origin 文档', other: 'EN', app: '打开 LaunchPad', source: '源仓库', edit: '在 GitHub 上编辑', mirrored: '镜像自', generated: '本页在构建时生成', updated: '每日自动更新' },
@@ -70,6 +80,50 @@ function deepwikiSection(lang) {
 <small>${zh ? '接入说明' : 'Setup guide'}: <a href="${guide}">${zh ? 'DeepWiki 指南' : 'the DeepWiki guide'} ↗</a></small>
 </div>
 </section>`;
+}
+
+function homeHero(lang, lead) {
+  const zh = lang === 'zh';
+  return `<section class="home-hero">
+  <div class="home-hero-copy">
+    <div class="home-eyebrow"><span class="home-dot"></span>${zh ? 'AGENT-CI-INFRA / LAUNCHPAD' : 'AGENT-CI-INFRA / LAUNCHPAD'}</div>
+    <h1>${zh ? '一个仓库。<br><em>一台虚拟电脑。</em>' : 'One repo.<br><em>One virtual computer.</em>'}</h1>
+    <p>${marked.parseInline(lead)}</p>
+    <div class="home-ctas"><a class="btn primary" href="${urls(lang, 'lifecycle')}">${zh ? '跟一个任务' : 'Follow a task'} <span>↗</span></a><a class="btn ghost" href="${urls(lang, 'architecture')}">${zh ? '看架构' : 'See the architecture'} <span>↓</span></a></div>
+    <div class="home-command"><span>→</span><code>${APP}/</code><a href="${APP}/" target="_blank" rel="noopener">${zh ? '打开' : 'Open'} ↗</a></div>
+  </div>
+  <div class="home-orbit" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit orbit-three"></div><div class="orbit-center">L</div><div class="orbit-note note-one">${zh ? '派发' : 'dispatch'} <b>01</b></div><div class="orbit-note note-two">${zh ? '角色运行' : 'role run'} <b>02</b></div><div class="orbit-note note-three">${zh ? '发布' : 'publish'} <b>03</b></div></div>
+</section>`;
+}
+
+function homeProof(lang) {
+  const zh = lang === 'zh';
+  const items = zh
+    ? [['01', '每个仓库一台项目电脑'], ['02', '角色池与不可变快照'], ['03', '独立的管理平面']]
+    : [['01', 'One project computer per repository'], ['02', 'A role pool with immutable snapshots'], ['03', 'A separate management plane']];
+  return `<section class="home-proof"><span>${zh ? 'LAUNCHPAD 一览' : 'LAUNCHPAD AT A GLANCE'}</span>${items.map(([n, text]) => `<div><b>${n}</b>${esc(text)}</div>`).join('')}</section>`;
+}
+
+function homeHow(lang) {
+  const zh = lang === 'zh';
+  const steps = zh
+    ? [['01', '派发', '事件被过滤并记录。'], ['02', '决定', 'Manager 创建、继续或忽略。'], ['03', '运行', '角色在项目电脑里运行。'], ['04', '验证', '独立 QA 检查候选。'], ['05', '发布', '现有 publisher 交付。'], ['06', '治理', '管理平面使用自己的授权。']]
+    : [['01', 'Dispatch', 'An event is filtered and recorded.'], ['02', 'Decide', 'The Manager creates, continues or ignores.'], ['03', 'Run', 'A role runs in the project computer.'], ['04', 'Prove', 'Independent QA inspects the candidate.'], ['05', 'Publish', 'The existing publisher opens the delivery.'], ['06', 'Govern', 'The management plane uses its own authority.']];
+  return `<section class="home-section"><div class="section-label">${zh ? '它怎么工作' : 'HOW IT WORKS'} <span>01 / 03</span></div><h2>${zh ? '从一个事件<br><em>到一次交付。</em>' : 'From one event<br><em>to one delivery.</em>'}</h2><p>${zh ? '控制平面过滤事件、让 Manager 做决定，任务引擎在项目电脑里运行角色，独立 QA 验证候选，然后进入既有发布路径。' : 'The control plane filters events and lets the Manager decide; the task engine runs roles in the project computer; independent QA verifies the candidate before the existing publisher path.'}</p><div class="home-process">${steps.map(([n, title, text]) => `<div><span>${n}</span><strong>${esc(title)}</strong><small>${esc(text)}</small></div>`).join('')}</div></section>`;
+}
+
+function homeStart(lang) {
+  const zh = lang === 'zh';
+  const cards = HOME_START.map(([slug, en, zhText]) => {
+    const title = LABELS[lang][slug];
+    return `<a class="home-card" href="${urls(lang, slug)}"><b>${esc(title)}</b><span>${esc(zh ? zhText : en)}</span><em>${zh ? '阅读' : 'Read'} ↗</em></a>`;
+  }).join('');
+  return `<section class="home-section"><div class="section-label">${zh ? '从这里开始' : 'START HERE'} <span>02 / 03</span></div><h2>${zh ? '选一条<br><em>进入系统的路径。</em>' : 'Pick a path<br><em>into the system.</em>'}</h2><div class="home-cards">${cards}</div></section>`;
+}
+
+function homeCta(lang) {
+  const zh = lang === 'zh';
+  return `<section class="home-cta"><div><span class="section-label">${zh ? '准备好了就开始' : 'READY WHEN YOU ARE'}</span><h2>${zh ? '从一个任务开始。' : 'Start with a task.'}</h2><p>${zh ? '跟着一个事件，看它如何变成任务、候选和交付。' : 'Follow one event as it becomes a task, a candidate and a delivery.'}</p></div><a class="btn primary" href="${urls(lang, 'lifecycle')}">${zh ? '看任务生命周期' : 'Follow the lifecycle'} <span>↗</span></a></section>`;
 }
 
 function page({ lang, current, title, body, upstream = false }) {
@@ -197,9 +251,18 @@ function writeDoc(lang, slug, md, title) {
     : join(OUT, lang === 'zh' ? 'docs' : 'en/docs', slug);
   mkdirSync(outDir, { recursive: true });
   const edit = slug === 'snapshot' ? '' : `<p class="mut" style="margin-bottom:18px"><a href="${DOCS_GH}/blob/main/docs/${lang}/${slug}.md">${esc(T[lang].edit)} docs/${lang}/${slug}.md ↗</a></p>`;
-  let body = `${edit}${marked.parse(rewriteDocLinks(md, lang))}`;
-  if (slug === 'index') body += deepwikiSection(lang);
-  writeFileSync(join(outDir, 'index.html'), page({ lang, current: slug, title, body }));
+  const rewritten = rewriteDocLinks(md, lang);
+  if (slug === 'index') {
+    const cut = rewritten.indexOf('\n## ');
+    const intro = cut === -1 ? rewritten : rewritten.slice(0, cut);
+    const rest = cut === -1 ? '' : rewritten.slice(cut + 1);
+    const lead = intro.replace(/^#\s+[^\n]*\n+/, '').trim();
+    const body = `<div class="home">${homeHero(lang, lead)}${homeProof(lang)}${homeHow(lang)}${homeStart(lang)}<section class="home-markdown">${edit}${marked.parse(rest)}</section>${deepwikiSection(lang)}${homeCta(lang)}</div>`;
+    writeFileSync(join(outDir, 'index.html'), page({ lang, current: slug, title, body }));
+  } else {
+    const body = `${edit}${marked.parse(rewritten)}`;
+    writeFileSync(join(outDir, 'index.html'), page({ lang, current: slug, title, body }));
+  }
 }
 
 function upstreamSlug(path) {
